@@ -12,6 +12,23 @@ openai = "^0.28.0"
 python-dotenv = "^1.0.0"
 
 
+[tool.poetry.group.dev.dependencies]
+pylint = "^2.17.6"
+black = "^23.9.1"
+mypy = "^1.5.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+    # Disable missing module and function docstring since the information
+    # regarding functionality is provided with more than enough
+    # detail by the functions themselves
+    "missing-module-docstring",
+    "missing-function-docstring"
+]
+
+[tool.black]
+line-length=100

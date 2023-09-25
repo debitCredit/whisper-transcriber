@@ -10,6 +10,7 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 AUDIO_ENGINE_ID = "whisper-1"
 
+
 def initialize_openai_api_and_logging():
     if not OPENAI_API_KEY:
         logging.error("Error - OPENAI_API_KEY not set")
@@ -23,19 +24,19 @@ def initialize_openai_api_and_logging():
 @retry(wait=wait_random_exponential(multiplier=0.5, max=60), stop=stop_after_attempt(3))
 def transcribe_audio(file_name):
     try:
-        with open(file_name, "rb") as audio_file:
+        with open(file_name, "rb") as audio_file_obj:
             logging.info("Opened audio file: %s", file_name)
             logging.info("Transcribing audio...")
-            transcript = openai.Audio.transcribe(AUDIO_ENGINE_ID, audio_file)
+            transcript = openai.Audio.transcribe(AUDIO_ENGINE_ID, audio_file_obj)
 
-            logging.info(transcript['text'])
+            logging.info(transcript["text"])
 
-    except FileNotFoundError as e:
+    except FileNotFoundError as e:  # pylint: disable=C0103
         logging.error("Could not find audio file: %s", file_name)
         raise e
-    except openai.error.OpenAIError as e:
+    except openai.error.OpenAIError as e:  # pylint: disable=C0103
         logging.error("Error calling OpenAI API: %s", e)
-        raise e
+
 
 if __name__ == "__main__":
     initialize_openai_api_and_logging()
