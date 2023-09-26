@@ -41,8 +41,8 @@ jobs:
 
     - name: Install Dependencies
       run: |
-          ./bin/task install
+        task install
 
     - name: Lint code
       run: |
-        ./bin/task lint
+        task lint
