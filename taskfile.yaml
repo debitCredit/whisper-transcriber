@@ -11,3 +11,4 @@ tasks:
     desc: Installs the package.
     cmds:
       - poetry install
+      - poetry run pre-commit install
