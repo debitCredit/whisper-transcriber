@@ -11,7 +11,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 AUDIO_ENGINE_ID = "whisper-1"
 
 
-def initialize_openai_api_and_logging():
+def initialize_openai_api_and_logging() -> None:
     if not OPENAI_API_KEY:
         logging.error("Error - OPENAI_API_KEY not set")
         sys.exit(1)
@@ -22,7 +22,7 @@ def initialize_openai_api_and_logging():
 
 
 @retry(wait=wait_random_exponential(multiplier=0.5, max=60), stop=stop_after_attempt(3))
-def transcribe_audio(file_name):
+def transcribe_audio(file_name: str) -> None:
     try:
         with open(file_name, "rb") as audio_file_obj:
             logging.info("Opened audio file: %s", file_name)
