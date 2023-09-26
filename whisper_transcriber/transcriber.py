@@ -39,6 +39,7 @@ def transcribe_audio(file_name):
 
 
 if __name__ == "__main__":
+    # Initialize OpenAI API and logging
     initialize_openai_api_and_logging()
 
     if len(sys.argv) < 2:

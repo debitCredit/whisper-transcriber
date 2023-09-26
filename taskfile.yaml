@@ -4,9 +4,9 @@ tasks:
   lint:
     desc: Lints the code and reports on issues.
     cmds:
-      - python3 -m poetry run black --check whisper_transcriber
-      - python3 -m poetry run pylint whisper_transcriber
-      - python3 -m poetry run mypy whisper_transcriber
+      - poetry run black --check whisper_transcriber
+      - poetry run pylint whisper_transcriber
+      - poetry run mypy whisper_transcriber
   install:
     desc: Installs the package.
     cmds:
