@@ -47,3 +47,7 @@ jobs:
     - name: Lint code
       run: |
         task lint
+
+    - name: Run tests
+      run: |
+        task test

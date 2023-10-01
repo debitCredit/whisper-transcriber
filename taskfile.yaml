@@ -4,11 +4,15 @@ tasks:
   lint:
     desc: Lints the code and reports on issues.
     cmds:
-      - poetry run black --check whisper_transcriber
-      - poetry run pylint whisper_transcriber
-      - poetry run mypy whisper_transcriber
+      - poetry run black --check transcriber
+      - poetry run pylint transcriber
+      - poetry run mypy transcriber
   install:
     desc: Installs the package.
     cmds:
       - poetry install
       - poetry run pre-commit install
+  test:
+    desc: Runs the tests.
+    cmds:
+      - poetry run pytest
