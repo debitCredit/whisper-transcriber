@@ -17,7 +17,7 @@ def initialize_openai_api_and_logging() -> None:
     openai_api_key = os.getenv("OPENAI_API_KEY")
 
     if not openai_api_key:
-        logging.error("Error - openai_api_key not set")
+        logging.error("Error - OPENAI_API_KEY not set")
         sys.exit(1)
     else:
         openai.api_key = openai_api_key
