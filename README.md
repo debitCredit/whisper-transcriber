@@ -35,10 +35,13 @@ poetry install
 ## Usage
 To use the transcriber, ensure you have the necessary environment variable set up: OPENAI_API_KEY. Then, you can utilize the audio_transcription.py script within the transcriber directory.
 
-To transcribe an audio file:
+Example usage:
 
 ```bash
-python transcriber/audio_transcription.py <path_to_audio_file>
+python -m transcriber.audio_transcription /whisper_transcriber/jfk.flac
+INFO:root:Opened audio file: /whisper_transcriber/jfk.flac
+INFO:root:Transcribing audio...
+INFO:root:And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.
 ```
 
 The repository includes a short audio file for testing: `jfk.flac`
