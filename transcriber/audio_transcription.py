@@ -12,6 +12,22 @@ from dotenv import load_dotenv
 AUDIO_ENGINE_ID = "whisper-1"
 
 
+retry_conditions = (
+    retry_if_exception_type(openai.error.Timeout)
+    | retry_if_exception_type(openai.error.APIError)
+    | retry_if_exception_type(openai.error.APIConnectionError)
+    | retry_if_exception_type(openai.error.RateLimitError)
+    | retry_if_exception_type(openai.error.ServiceUnavailableError)
+)
+
+configured_retry = retry(
+    wait=wait_random_exponential(multiplier=0.5, max=60),
+    stop=stop_after_attempt(3),
+    reraise=True,
+    retry=retry_conditions,
+)
+
+
 def initialize_openai_api_and_logging() -> None:
     load_dotenv()
     openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -25,20 +41,8 @@ def initialize_openai_api_and_logging() -> None:
     logging.basicConfig(level=logging.INFO)
 
 
-@retry(
-    wait=wait_random_exponential(multiplier=0.5, max=60),
-    stop=stop_after_attempt(3),
-    reraise=True,
-    retry=(
-        retry_if_exception_type(openai.error.Timeout)
-        | retry_if_exception_type(openai.error.APIError)
-        | retry_if_exception_type(openai.error.APIConnectionError)
-        | retry_if_exception_type(openai.error.RateLimitError)
-        | retry_if_exception_type(openai.error.ServiceUnavailableError)
-    ),
-)
 def transcribe_audio_from_file(file_obj: BinaryIO) -> Optional[str]:
-    """Transcribes audio from a file object using OpenAI.
+    """Transcribes audio from a file object using OpenAI Whisper API.
 
     Args:
         file_obj: A binary file object containing audio data.
@@ -56,6 +60,9 @@ def transcribe_audio_from_file(file_obj: BinaryIO) -> Optional[str]:
         raise
 
 
+transcribe_audio_from_file_with_retry = configured_retry(transcribe_audio_from_file)
+
+
 def transcribe_audio(file_name: str) -> Optional[str]:
     """Transcribes audio from a file using its name.
 
@@ -68,7 +75,7 @@ def transcribe_audio(file_name: str) -> Optional[str]:
     try:
         with open(file_name, "rb") as audio_file_obj:
             logging.info("Opened audio file: %s", file_name)
-            return transcribe_audio_from_file(audio_file_obj)
+            return transcribe_audio_from_file_with_retry(audio_file_obj)
     except (FileNotFoundError, PermissionError) as e:  # pylint: disable=invalid-name
         logging.error("Error accessing audio file %s: %s", file_name, e)
         raise

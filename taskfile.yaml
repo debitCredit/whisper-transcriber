@@ -13,6 +13,7 @@ tasks:
       - poetry install
       - poetry run pre-commit install
   test:
-    desc: Runs the tests.
+    desc: Runs the tests and coverage.
     cmds:
       - poetry run pytest
+      - poetry run pytest --cov=transcriber
