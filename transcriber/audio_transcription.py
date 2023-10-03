@@ -28,7 +28,7 @@ configured_retry = retry(
 )
 
 
-def initialize_openai_api_and_logging() -> None:
+def _initialize_openai_api_and_logging() -> None:
     load_dotenv()
     openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -41,7 +41,7 @@ def initialize_openai_api_and_logging() -> None:
     logging.basicConfig(level=logging.INFO)
 
 
-def transcribe_audio_from_file(file_obj: BinaryIO) -> Optional[str]:
+def _transcribe_audio_from_file(file_obj: BinaryIO) -> Optional[str]:
     """Transcribes audio from a file object using OpenAI Whisper API.
 
     Args:
@@ -60,7 +60,7 @@ def transcribe_audio_from_file(file_obj: BinaryIO) -> Optional[str]:
         raise
 
 
-transcribe_audio_from_file_with_retry = configured_retry(transcribe_audio_from_file)
+_transcribe_audio_from_file_with_retry = configured_retry(_transcribe_audio_from_file)
 
 
 def transcribe_audio(file_name: str) -> Optional[str]:
@@ -75,14 +75,14 @@ def transcribe_audio(file_name: str) -> Optional[str]:
     try:
         with open(file_name, "rb") as audio_file_obj:
             logging.info("Opened audio file: %s", file_name)
-            return transcribe_audio_from_file_with_retry(audio_file_obj)
+            return _transcribe_audio_from_file_with_retry(audio_file_obj)
     except (FileNotFoundError, PermissionError) as e:  # pylint: disable=invalid-name
         logging.error("Error accessing audio file %s: %s", file_name, e)
         raise
 
 
 if __name__ == "__main__":
-    initialize_openai_api_and_logging()
+    _initialize_openai_api_and_logging()
 
     if len(sys.argv) < 2:
         logging.error("Usage: python transcribe.py <audio_file>")
