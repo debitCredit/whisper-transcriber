@@ -1,14 +1,18 @@
 import os
-import sys
 import io
-import pytest
 import logging
-from unittest.mock import patch, Mock, mock_open, ANY
+from unittest.mock import patch, mock_open, ANY
+import pytest
+
 
 from openai import OpenAIError
 from openai.error import Timeout
 
-from transcriber.audio_transcription import _initialize_openai_api_and_logging, _transcribe_audio_from_file, transcribe_audio
+from transcriber.audio_transcription import (
+    _initialize_openai_api_and_logging,
+    _transcribe_audio_from_file,
+    transcribe_audio
+)
 
 mock_transcript = {'text': 'sample text'}
 
@@ -16,7 +20,6 @@ mock_transcript = {'text': 'sample text'}
 @pytest.fixture
 def setup_logging():
     logging.getLogger().setLevel(logging.INFO)
-
 
 # Test initialize_openai_api_and_logging function
 def test_initialize_openai_api_and_logging_missing_api_key():
@@ -27,7 +30,8 @@ def test_initialize_openai_api_and_logging_missing_api_key():
         mock_exit.assert_called_with(1)
 
 
-def test_initialize_openai_api_and_logging_successful_initialization(setup_logging):
+@pytest.mark.usefixtures("setup_logging")
+def test_initialize_openai_api_and_logging_successful_initialization():
     with patch('dotenv.load_dotenv'):
         os.environ['OPENAI_API_KEY'] = 'fake-key'
         _initialize_openai_api_and_logging()
@@ -44,14 +48,16 @@ def test_transcribe_audio_from_file_successful():
         assert result == 'sample text'
 
 
-def test_transcribe_audio_file_not_found(setup_logging):
+def test_transcribe_audio_file_not_found():
     with patch('logging.error') as mock_log_error:
         with pytest.raises(FileNotFoundError):
             transcribe_audio('non_existent_file')
-    mock_log_error.assert_called_with('Error accessing audio file %s: %s', 'non_existent_file', ANY)  # using ANY for dynamic error message
+    mock_log_error.assert_called_with(
+        'Error accessing audio file %s: %s', 'non_existent_file', ANY
+        )
 
 
-def test_transcribe_audio_openai_error(setup_logging):
+def test_transcribe_audio_openai_error():
     with patch('openai.Audio.transcribe', side_effect=OpenAIError('OpenAI Error')), \
          patch('logging.error') as mock_log_error:
         # Create a BytesIO object with some fake audio data
@@ -59,21 +65,23 @@ def test_transcribe_audio_openai_error(setup_logging):
         with pytest.raises(OpenAIError, match='OpenAI Error'):
             _transcribe_audio_from_file(fake_audio_file_obj)
 
-    mock_log_error.assert_called_with('Error calling OpenAI API: %s', ANY)  # using ANY for dynamic error message
+    mock_log_error.assert_called_with(
+        'Error calling OpenAI API: %s', ANY
+        )
 
 
-def test_transcribe_audio_successful(setup_logging):
+def test_transcribe_audio_successful():
     fake_transcription = "This is a fake transcription."
     with patch('openai.Audio.transcribe', return_value={"text": fake_transcription}):
         fake_audio_file_obj = io.BytesIO(b'fake audio data')
         result = _transcribe_audio_from_file(fake_audio_file_obj)
-        
+
     assert result == fake_transcription
 
 
-def test_transcribe_audio_retry_on_openai_error(setup_logging):
+def test_transcribe_audio_retry_on_openai_error():
     m_open = mock_open(read_data="fake audio data")
-    
+
     expected_exception = Timeout('Retry')
 
     with patch('builtins.open', m_open), \
@@ -82,6 +90,6 @@ def test_transcribe_audio_retry_on_openai_error(setup_logging):
          patch('logging.info') as mock_log_info:
 
         transcribe_audio('fake_audio_file')
-    
+
         mock_log_error.assert_called_with('Error calling OpenAI API: %s', expected_exception)
         mock_log_info.assert_called_with(mock_transcript['text'])
