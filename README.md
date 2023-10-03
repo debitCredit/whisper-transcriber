@@ -1,6 +1,7 @@
 # Whisper Transcriber
 
-Whisper Transcriber is a Python application that transcribes audio files using the OpenAI Whisper ASR API. This repository contains the necessary source code and related files for the Whisper Transcriber.
+Whisper Transcriber is a Python application that transcribes audio files using the OpenAI Whisper ASR API. 
+This repository contains the necessary source code and related files for the Whisper Transcriber.
 
 ## Table of Contents
 
@@ -33,7 +34,14 @@ poetry install
 
 
 ## Usage
-To use the transcriber, ensure you have the necessary environment variable set up: OPENAI_API_KEY. Then, you can utilize the audio_transcription.py script within the transcriber directory.
+To use the transcriber, ensure you have the necessary environment variable set up: OPENAI_API_KEY. 
+Then, you can utilize the audio_transcription.py script within the transcriber directory.
+
+Run the transcriber with:
+
+```bash
+python -m transcriber.audio_transcription <path_to_file>
+```
 
 Example usage:
 
@@ -50,7 +58,9 @@ The repository includes a short audio file for testing: `jfk.flac`
 
 - **Initialization**: Before any transcription, the script initializes OpenAI's API key from environment variables and sets up basic logging.
 
-- **Transcription**: The script provides a function to transcribe audio directly from a file object. This function communicates with the OpenAI API, attempting to convert the audio to text. If successful, it logs and returns the transcribed text.
+- **Transcription**: The script provides a function to transcribe audio directly from a file object. 
+This function communicates with the OpenAI API, attempting to convert the audio to text. 
+If successful, it logs and returns the transcribed text.
 
 - **File Handling**: The primary function handles reading from a file and then uses the previously mentioned function to transcribe it.
 
@@ -68,7 +78,8 @@ This mechanism waits for a random exponential amount of time with a maximum of 6
 
 ## Tests
 
-The `whisper-transcriber` repository is equipped with unit tests to validate the core functionalities. To run the tests, follow these steps:
+The `whisper-transcriber` repository is equipped with unit tests to validate the core functionalities. 
+To run the tests, follow these steps:
 
 1. Ensure you're in the root directory of the cloned repository.
 2. Run the tests using the following command:
@@ -80,7 +91,8 @@ Upon execution, pytest will discover and run all tests in the tests directory, a
 
 ## Linting
 
-Linting helps maintain a consistent code style and catches potential issues. The project uses tools like `black`, `pylint`, and `mypy` for linting and type-checking.
+Linting helps maintain a consistent code style and catches potential issues. 
+The project uses tools like `black`, `pylint`, and `mypy` for linting and type-checking.
 
 To lint the code, follow these steps:
 
